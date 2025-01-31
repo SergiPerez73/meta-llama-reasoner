@@ -1,0 +1,7 @@
+argparse
+pandas
+torch
+sentence-transformers
+groq
+python-dotenv
+fastparquet
