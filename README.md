@@ -1,26 +1,19 @@
 # Meta Llama Reasoner
 
-Welcome to the Meta Llama Reasoner repository! This project aims to provide a robust and efficient reasoning engine for various applications.
+Welcome to the Meta Llama Reasoner repository! This project aims to provide the code necessary to train, evaluate and use a reasoner model based on the model `llama-3.3-70b-versatile`.
 
 ## Table of Contents
 
 - [Introduction](#introduction)
-- [Features](#features)
 - [Installation](#installation)
 - [Usage](#usage)
-- [Contributing](#contributing)
-- [License](#license)
+- [Author](#author)
 
 ## Introduction
 
-Meta Llama Reasoner is designed to handle complex reasoning tasks with ease. It leverages advanced algorithms to provide accurate and fast results.
+Meta Llama Reasoner is designed to make the base model `llama-3.3-70b-versatile` reason with a chain of thought before answering a question. A reward prediction model will be trained to be able to answer the best chain of thought that the base model produces. 
 
-## Features
-
-- High performance reasoning engine
-- Easy to integrate with other systems
-- Supports multiple reasoning paradigms
-- Extensible and customizable
+This reward prediction model will be trained on a Mathematical dataset that contains answers and questions of complex problems. The rational steps that the base model produces and the question is being asked is the X. The Y is whether the final answer of the base model will be correct or not. This iterative process helps in refining the reasoning capabilities of the base model, making it more reliable and effective in generating correct answers.
 
 ## Installation
 
@@ -28,7 +21,7 @@ To install Meta Llama Reasoner, follow these steps:
 
 1. Clone the repository:
     ```bash
-    git clone https://github.com/yourusername/meta-llama-reasoner.git
+    git clone https://github.com/sergiperez73/meta-llama-reasoner.git
     ```
 2. Navigate to the project directory:
     ```bash
@@ -40,27 +33,25 @@ To install Meta Llama Reasoner, follow these steps:
     ```
 Be sure to use Python version 3.10 to 3.12.
 
+4. Donwload the following dataset from the Kaggle webpage: [AIME Problem Set: 1983-2024](https://www.kaggle.com/datasets/hemishveeraboina/aime-problem-set-1983-2024/data)
+
 ## Usage
 
-To use Meta Llama Reasoner, follow these steps:
+The `llama-3.3-70b-versatile` model is used thanks to the Groq API. Therefore, you will need to specify your API key on the `config/.env` file before executing the code.
 
-1. Import the module in your project:
-    ```javascript
-    const llamaReasoner = require('meta-llama-reasoner');
-    ```
-2. Initialize the reasoner:
-    ```javascript
-    const reasoner = new llamaReasoner();
-    ```
-3. Use the reasoner to perform tasks:
-    ```javascript
-    const result = reasoner.reason(yourData);
-    console.log(result);
-    ```
+To train the model for the first time, you need to execute a command like the following example.
 
-## License
+```bash
+python training.py --starting_question 0 --n_training_questions 10 --sleep_time 30 --lr 0.001 --n_calls_per_question 5 --layer_config_embedding "512 256" --layer_config_general "512 256 1" --model_name "my_model"
+```
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+After the training process, a folder with the name specified on the `model_name` parameter will be created. It will contain:
+* A dataset with the results on each question
+* The metadata with the parameters used on the training execution
+* A file containing the weights of the model after the training.
+
+If you want to continue training your model, you can load it with the `--load_model_name` parameter, specifying there the name of the pretrained model you want to load. It is a good practice to fix the starting question to the next question of
+
 
 ## Author
 

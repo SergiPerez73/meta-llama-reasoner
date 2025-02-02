@@ -1,1 +1,4 @@
 data/AIME_Dataset_1983_2024.csv
+trained_models/*
+dataset_loader/__pycache__/
+models/__pycache__/

@@ -7,6 +7,8 @@ import time
 from dataset_loader.dataset_loader import getDataset
 from models.reward_prediction import ModelRewardPrediction, get_embedding
 from models.meta_llama_rational_steps import MetaLlamaRationalSteps
+import os
+import json
 
 system_prompt = "A conversation between User and Assistant. The user asks a question, and the Assistant solves it. The assistant first thinks about the reasoning process in the mind and then provides the user with the answer. The reasoning process and answer are enclosed within <think> </think> and <answer> </answer> tags, respectively, i.e., <think> reasoning process here </think> <answer> answer here </answer>"
 
@@ -21,11 +23,12 @@ def training_loop(model_reward_accuracy, model_rational_steps, AIME_Dataset, cla
         'Question_number': [],
         'Question': [],
         'Score': [],
-        'Loss': []
+        'Loss': [],
+        'Output': [],
     }
 
-    for i in range(args.n_training_questions):
-        print(f'Question {i+1}/{args.n_training_questions}')
+    for i in range(args.starting_question, args.starting_question + args.n_training_questions):
+        print(f'Question {i}/{args.starting_question + args.n_training_questions - 1}')
         question = AIME_Dataset.iloc[i]['Question']
         answer = AIME_Dataset.iloc[i]['Answer']
 
@@ -60,6 +63,7 @@ def training_loop(model_reward_accuracy, model_rational_steps, AIME_Dataset, cla
 
         training_dict['Question_number'].append(i)
         training_dict['Question'].append(question)
+        training_dict['Output'].append(outputs.mean().item())
         training_dict['Score'].append(score.mean().item())
         training_dict['Loss'].append(loss.item())
 
@@ -70,8 +74,35 @@ def training_loop(model_reward_accuracy, model_rational_steps, AIME_Dataset, cla
     return model_reward_accuracy, training_df
 
 
+def save_training(args, model_reward_accuracy, training_df):
+    """
+    Save the model and training results
+    """
+    if not os.path.exists(f'trained_models/{args.model_name}'):
+        os.mkdir(f'trained_models/{args.model_name}')
+
+
+    torch.save(model_reward_accuracy.state_dict(), f'trained_models/{args.model_name}/model_weights.pth')
+    training_df.to_parquet(f'trained_models/{args.model_name}/training_log.parquet')
+
+    training_metadata = {
+        'starting_question': args.starting_question,
+        'n_training_questions': args.n_training_questions,
+        'sleep_time': args.sleep_time,
+        'lr': args.lr,
+        'n_calls_per_question': args.n_calls_per_question,
+        'layer_config_embedding': args.layer_config_embedding,
+        'layer_config_general': args.layer_config_general,
+        'model_name': args.model_name
+    }
+
+    with open(f'trained_models/{args.model_name}/training_metadata.json', 'w') as f:
+        json.dump(training_metadata, f)
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Train a model with specified parameters.')
+    parser.add_argument('--starting_question', type=int, default=0, required=False, help='Starting question. First is 0')
     parser.add_argument('--n_training_questions', type=int, default=4, required=False, help='Number of training questions')
     parser.add_argument('--sleep_time', type=int, default=60, required=False, help='Seconds sleeping between questions (to avoid rate limiting)')
     parser.add_argument('--lr', type=float, default=0.001, required=False, help='Learning rate')
@@ -79,6 +110,7 @@ if __name__ == '__main__':
     parser.add_argument('--layer_config_embedding', type=str, default="512 256", required=False, help='Layer configuration for embeddings')
     parser.add_argument('--layer_config_general', type=str, default="256 128 1", required=False, help='Layer configuration for general layers')
     parser.add_argument('--model_name', type=str, default=f'{int(time.time())}', required=False, help='Name of the trained model')
+    parser.add_argument('--load_model_name', type=str, default=None, required=False, help='Load a model to continue training')
 
     args = parser.parse_args()
 
@@ -86,9 +118,18 @@ if __name__ == '__main__':
 
     print('Dataset loaded')
 
-    layer_config_embedding = args.layer_config_embedding
-    layer_config_general = args.layer_config_general
-    model_reward_accuracy = ModelRewardPrediction(layer_config_embedding, layer_config_general, n_embeddings=2)
+    if args.load_model_name is not None:
+        with open(f'trained_models/{args.load_model_name}/training_metadata.json', 'r') as f:
+            training_metadata = json.load(f)
+
+        model_reward_accuracy = ModelRewardPrediction(layer_config_embedding = training_metadata['layer_config_embedding'],
+                                                      layer_config_general = training_metadata['layer_config_general'],
+                                                      n_embeddings=2)
+        model_reward_accuracy.load_state_dict(torch.load(f'trained_models/{args.load_model_name}/model_weights.pth', weights_only=True))
+    else:
+        layer_config_embedding = args.layer_config_embedding
+        layer_config_general = args.layer_config_general
+        model_reward_accuracy = ModelRewardPrediction(layer_config_embedding, layer_config_general, n_embeddings=2)
 
     model_rational_steps = MetaLlamaRationalSteps()
 
@@ -98,7 +139,6 @@ if __name__ == '__main__':
 
     print('Training complete')
 
-    torch.save(model_reward_accuracy.state_dict(), f'trained_models/trained_model_{args.model_name}.pth')
-    training_df.to_parquet(f'training_log/training_log_{args.model_name}.parquet')
+    save_training(args, model_reward_accuracy, training_df)
 
     print('Model and results saved')
