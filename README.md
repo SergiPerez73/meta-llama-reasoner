@@ -50,7 +50,7 @@ After the training process, a folder with the name specified on the `model_name`
 * The metadata with the parameters used on the training execution
 * A file containing the weights of the model after the training.
 
-If you want to continue training your model, you can load it with the `--load_model_name` parameter, specifying there the name of the pretrained model you want to load. It is a good practice to fix the starting question to the next question of
+If you want to continue training your model, you can load it with the `--load_model_name` parameter, specifying there the name of the pretrained model you want to load. It is a good practice to fix the starting question to the next question of the last question the pretrained model answered, which can be extracted from the metadata of the pretrained model.
 
 
 ## Author

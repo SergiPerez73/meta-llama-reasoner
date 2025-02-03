@@ -97,7 +97,7 @@ def save_training(args, model_reward_accuracy, training_df):
     }
 
     with open(f'trained_models/{args.model_name}/training_metadata.json', 'w') as f:
-        json.dump(training_metadata, f)
+        json.dump(training_metadata, f, indent=4, separators=(',', ':'))
 
 
 if __name__ == '__main__':
