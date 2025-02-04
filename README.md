@@ -64,7 +64,7 @@ Having created the file containing the questions, you can execute a command like
 python inference.py --sleep_time 30 --load_model_name "1738612360" --folder_name "example_questions" --n_calls_per_question 10
 ```
 
-The model will select the best possible answer among the answers the base model outputs. Therefore, the more calls per question you fix, the more likely is to find the best answer.
+The model will select the best possible answer among the answers the base model outputs. Therefore, the more calls per question you fix, the more likely is to find the best answer. The answers will appear on the same file the questions were gotten.
 
 ## Author
 
