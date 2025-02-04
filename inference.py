@@ -19,8 +19,8 @@ system_prompt = "A conversation between User and Assistant. The user asks a ques
 
 def perform_inference(model_reward_accuracy, model_rational_steps, questions, args):
     results = []
-    for question in questions:
-
+    for i, question in enumerate(questions):
+        print(f"Question {i}/{len(questions) - 1}")
         model_answer_list = []
         question_embedding_list = []
         rational_step_embedding_list = []
@@ -45,16 +45,17 @@ def perform_inference(model_reward_accuracy, model_rational_steps, questions, ar
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Train a model with specified parameters.')
-    parser.add_argument('--n_questions', type=int, default=4, required=False, help='Number of questions')
-    parser.add_argument('--load_model_name', type=str, default=None, required=True, help='Load a model to continue training')
+    parser.add_argument('--sleep_time', type=int, default=30, required=False, help='Seconds sleeping between questions (to avoid rate limiting)')
+    parser.add_argument('--load_model_name', type=str, default=None, required=True, help='Load a model to do inference with')
+    parser.add_argument('--folder_name', type=str, default=None, required=True, help='Folder containing questions_answers.json where answers will be saved')
     parser.add_argument('--n_calls_per_question', type=int, default=3, required=False, help='Number of calls per question')
 
     args = parser.parse_args()
 
-    questions = [
-        "Follow the sequence: 1 = 5, 2 = 10, 3 = 15, 4 = 20, 5 = ?",
-        "Find a word that relates on the meaning 'Juicio' and 'Tristeza'"
-    ]
+    with open(f'inf_questions_answers/{args.folder_name}/questions_answers.json', 'r') as f:
+        questions_dict = json.load(f)
+    
+    questions = questions_dict['questions']
 
     if args.load_model_name is None:
         raise ValueError("Please provide a model name to load")
@@ -72,5 +73,9 @@ if __name__ == "__main__":
     model_rational_steps = MetaLlamaRationalSteps()
 
     answers = perform_inference(model_reward_accuracy, model_rational_steps, questions, args)
+
+    with open(f'inf_questions_answers/{args.folder_name}/questions_answers.json', 'w') as f:
+        json.dump({'questions': questions, 'answers': answers}, f, indent=4, separators=(',', ':'))
+
     for i, (question, answer) in enumerate(zip(questions, answers)):
         print(f"Question {i}:\n\n {question}\n\n{answer}\n\n\n")

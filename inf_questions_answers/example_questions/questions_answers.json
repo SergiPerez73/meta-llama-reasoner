@@ -1,0 +1,16 @@
+{
+    "questions":[
+        "What is the capital of France?",
+        "How many continents are there on Earth?",
+        "What is the largest mammal?",
+        "Who wrote 'To Kill a Mockingbird'?",
+        "What is the speed of light?"
+    ],
+    "answers":[
+        "Rational Step:  To find the answer, I need to recall the basic geographical information about France. France is a country in Europe, and like any other country, it has a capital city where the government and main administrative institutions are located. I know that the capital of France is a well-known city, often associated with art, fashion, and cuisine. The city I am thinking of is the most populous city in France and is situated in the northern part of the country. It is home to many iconic landmarks, including the Eiffel Tower. Given these characteristics, I am confident that I can identify the correct city. \nAnswer:   Paris ",
+        "Rational Step:  The question asks about the number of continents on Earth. To answer this, I need to recall the basic geography of our planet. Continents are large areas of land that are separated by oceans. The most commonly recognized continents are Africa, Antarctica, Asia, Australia, Europe, North America, and South America. Some models may group Europe and Asia together as Eurasia, or combine North and South America as the Americas, but the 7-continent model is the most widely taught and accepted. \nAnswer:   There are 7 continents on Earth. ",
+        "Rational Step:  To determine the largest mammal, we need to consider various species of mammals and compare their average weights and lengths. The largest mammals are typically found in the ocean, as they can grow to much larger sizes than land mammals due to the buoyancy of water, which reduces the need for strong limbs and skeletal support. Among these marine mammals, the blue whale is known for its massive size, with some individuals reaching lengths of over 100 feet and weighing hundreds of thousands of pounds. Comparing this to other large mammals, such as elephants and hippopotamuses, which are the largest land mammals, it becomes clear that the blue whale is significantly larger. \nAnswer:   The blue whale is the largest mammal, with some individuals reaching lengths of up to 100 feet and weighing up to 200 tons. ",
+        "Rational Step:  The question asks about the author of a specific novel, 'To Kill a Mockingbird'. To answer this, I need to recall the information about the book. 'To Kill a Mockingbird' is a classic novel that has been widely read and studied. It is known for its exploration of issues such as racial injustice, tolerance, and the loss of innocence. The author of this novel is an American writer who was born in Alabama and drew inspiration from her childhood experiences. Her name is Harper Lee. \nAnswer:   Harper Lee ",
+        "Rational Step:  The speed of light is a fundamental constant in physics, and it has been precisely measured and defined. To answer this question, I need to recall the value of the speed of light, which is approximately 299,792,458 meters per second. This value is a universal constant and is denoted by the letter c. It is the speed at which electromagnetic waves, including light, propagate through a vacuum. \nAnswer:   The speed of light is approximately 299,792,458 meters per second. "
+    ]
+}
